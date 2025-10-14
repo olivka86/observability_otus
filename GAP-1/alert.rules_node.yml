@@ -1,0 +1,47 @@
+groups:
+- name: node-exporter-rules
+  rules:
+    - alert: NodeExporterDown
+      expr: up{job="node_exporter_ubuntu"} == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Node exporter is down."
+        description: "Node exporter on {{ $labels.instance }} is not reachable."
+
+    - alert: HighCPUUsage
+      expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{job="node_exporter_ubuntu",mode="idle"}[5m])) * 100) > 85
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU usage"
+        description: "CPU usage >85% for 5 minutes on {{ $labels.instance }}"
+
+    - alert: LowRootDiskSpace
+      expr: (node_filesystem_avail_bytes{mountpoint="/",fstype=~"ext4|xfs|btrfs"} / node_filesystem_size_bytes{mountpoint="/",fstype=~"ext4|xfs|btrfs"}) < 0.10
+      for: 10m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Free disk space low"
+        description: "Free space less than 10% on root device of {{ $labels.instance }}"
+
+    - alert: LowMemory
+      expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) < 0.10
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Low available memory"
+        description: "Available memory less than 10% on {{ $labels.instance }}"
+
+    - alert: HighSwapUsage
+      expr: (node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / node_memory_SwapTotal_bytes > 0.5
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Swap usage high"
+        description: "Swap usage >50% for 5m on {{ $labels.instance }}"
