@@ -1,0 +1,33 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'severity']
+
+  routes:
+    - match:
+        severity: critical
+      receiver: 'telegram_critical'
+      repeat_interval: 1h
+
+    - match_re:
+        severity: warning
+      receiver: 'telegram_warning'
+      repeat_interval: 30m
+
+  receiver: telegram_warning
+
+
+receivers:
+  - name: 'telegram_critical'
+    telegram_configs:
+      - chat_id: -1003496252987
+        message_thread_id: 2
+        bot_token_file: /etc/prometheus/.bot_token
+
+  - name: 'telegram_warning'
+    telegram_configs:
+      - chat_id: -1003496252987
+        message_thread_id: 4
+        bot_token_file: /etc/prometheus/.bot_token
+
