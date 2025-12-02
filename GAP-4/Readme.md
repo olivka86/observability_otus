@@ -1,6 +1,8 @@
 1. Активировал DrillDown в Grafana
+![](drilldown.png)
 2. Настроил Contact Point на Telegram и протестировал подключение
 3. Настроил 2 алерта: на доступность MySQL и CMS. 
 - 3.1. Для MySQL использовал метрику mysql_up с условием, что она равна 0
 - 3.2. Для CMS использовал метрику probe_success с условием, что она равно 0  
+![](alerts.png)
 4. Подключил Contact Point к настроенным алертам
